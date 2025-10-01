@@ -1,0 +1,16 @@
+cat > .dockerignore <<'EOF'
+.git
+.gitignore
+*.pem
+*.key
+*.crt
+.DS_Store
+assets/*.docx
+node_modules
+dist
+build
+EOF
+
+git add .dockerignore
+git commit -m "add .dockerignore"
+git push
