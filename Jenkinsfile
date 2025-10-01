@@ -9,16 +9,14 @@ pipeline {
   stages {
     stage('Checkout') { steps { checkout scm } }
 
-    stage('Docker Build & Push (amd64)') {
+    stage('Docker Build & Push') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
           sh '''
             echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-            docker buildx create --use --name jx || docker buildx use jx
-            docker buildx build --platform linux/amd64 \
-              -t ${DOCKERHUB_REPO}:${IMAGE_TAG} \
-              -t ${DOCKERHUB_REPO}:latest \
-              --push .
+            docker build -t ${DOCKERHUB_REPO}:${IMAGE_TAG} -t ${DOCKERHUB_REPO}:latest .
+            docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}
+            docker push ${DOCKERHUB_REPO}:latest
             docker logout
           '''
         }
